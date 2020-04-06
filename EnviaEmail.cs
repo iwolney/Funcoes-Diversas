@@ -4,26 +4,27 @@ using System.Linq;
 using System.Web;
 using System.Net.Mail;
 using System.Collections;
-using PortalCyberOffice._CyberOffice._Global;
+using wMyAPPNameSpace;
 using System.Net;
 using System.Data;
 
-namespace PortalCyberOffice._CyberOffice._Global
+namespace wMyAPPNameSpace
 {
 /* Esta classe é usada por toda a aplicação para enviar e-mails. */
     public class EnviaEmail
     {
         public static bool EnviarEmail(int operador, int usuario, string destinatario, string nome, string destinatariosCopia, string assunto, string corpo)
         {
-            bool enviado = false; DataRow drSmtp = configSMTP();
+            bool enviado = false; 
+            DataRow drSmtp = configSMTP(); //Lista ou dataRow obtido do BD
             MailMessage wMail = new MailMessage();
-            wMail.From = new MailAddress("cyber01@inforshop.net.br", "Cyber Office");
+            wMail.From = new MailAddress("emailRemetente@provedor.com.br", "Nome Remetente");
             wMail.Subject = assunto;
             wMail.Body = corpo;
             wMail.IsBodyHtml = true;
             wMail.To.Add(new MailAddress(destinatario, nome));
-            wMail.Bcc.Add(new MailAddress("suporte@inforshop.com.br", "Suporte CyberOffice"));
-            wMail.Bcc.Add(new MailAddress("wolney.rodrigues@inforshop.com.br", "Wolney"));
+            wMail.Bcc.Add(new MailAddress("emailCC@provedor.com.br", "Nome CC"));
+            wMail.Bcc.Add(new MailAddress("emailCC2@provedor.com.br", "Nome CC2"));
 
             try
             {
@@ -80,7 +81,7 @@ namespace PortalCyberOffice._CyberOffice._Global
                                 }
                             }
                         }
-                        email.CCO = "suporte@inforshop.com.br;wolney.rodrigues@inforshop.com.br";
+                        email.CCO = "emailCC@provedor.com.br";
                         email.FormatoHTML = true;
                         email.EnviaEmailBanco();
                         email = null;
@@ -107,11 +108,11 @@ namespace PortalCyberOffice._CyberOffice._Global
                             }
                         }
                     }
-                    email.CCO = "suporte@inforshop.com.br;wolney.rodrigues@inforshop.com.br";
+                    email.CCO = "emailCC@provedor.com.br";
                     email.FormatoHTML = true;
-                    email.EnviaEmailBanco();
+                    email.EnviaEmailBanco(); //Gravar dados do e-mail em BD para enviar de outra forma
                     email = null;
-                    GravaLog.Log(operador, "Tabela cy_configSMTP vazia ou sem registro/configuração SMTP ativa.");
+                    GravaLog.Log(operador, "Tabela ConfigSMTP vazia ou sem registro/configuração SMTP ativa.");
                 }
             }
             catch (Exception ex) { GravaLog.Log(operador, ex.Message.ToString()); }
@@ -119,7 +120,7 @@ namespace PortalCyberOffice._CyberOffice._Global
         }
         protected static DataRow configSMTP()
         {
-            return _Global.DataObjetcs.ExecutaSQL_DataTable("select top 1 * from cy_configSMTP with(nolock) where smtp_ativo = 1 ").Rows[0];
+            return _Global.DataObjetcs.ExecutaSQL_DataTable("select top 1 * from ConfigSMTP with(nolock) where smtp_ativo = 1 ").Rows[0];
         }
     }
 }
